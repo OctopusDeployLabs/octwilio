@@ -60,6 +60,7 @@ You will need the following values to configure Octwilio to work with your Fireb
 | Config&nbsp;Value | Description                                                                                                                                                  |
 | :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Project&nbsp;ID   | The ID of your project (not always the same as the name) - find this [in the Console](https://console.firebase.google.com/u/1/)                              |
+| CLI CI Token      | (Optional) A [CI token](https://firebase.google.com/docs/cli/#cli-ci-systems) to authenticate requests from the Firebase CLI.
 
 #### Local development
 
@@ -75,6 +76,10 @@ cd octwilio
 2. Configure your project with the Firebase CLI
 
 After creating your Firebase project, replace `octwilio` in [`.firebaserc`](.firebaserc) with your project's ID.
+
+You also need to create a Firestore database for the approval notifications.
+
+Create a [CI token](https://firebase.google.com/docs/cli/#cli-ci-systems) for the CLI.
 
 3. Update the following commands with your values and run them with the Firebase CLI.
 
@@ -101,6 +106,8 @@ npm install
 ```bash
 npm run deploy
 ```
+
+There is a [`deploy`](./github/workflows/deploy.yml) workflow that will deploy your functions when changes are pushed to `master`. Add a secret named `FIREBASE_TOKEN` with your Firebase CI token for the deploy action to work. You can delete the file if you do not want to use it.
 
 6. Update Twilio number with processMessage URL
 
