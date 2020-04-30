@@ -37,8 +37,17 @@ function processApproval(from, result, message, response) {
 
 exports.processMessage = functions.https.onRequest((req, res) => {
     let from = req.body.From;
+    let to = req.body.To;
     let message = req.body.Body;
     let action = null;
+
+    if (to !== config.twilio.approval.from_number
+        && to !== config.twilio.deployment.from_number) {
+        return Promise.reject({
+            code: 403,
+            message: 'Unrecognized number'
+        });
+    }
 
     if (message.startsWith("Approve")) {
         action = processApproval(from, "Proceed", message, "Deployment approved.");
