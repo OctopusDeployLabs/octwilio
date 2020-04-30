@@ -35,9 +35,9 @@ exports.saveApproval = function (payload) {
         });
 };
 
-exports.sendTwilioMessage = function (message) {
+exports.sendTwilioMessage = function (options) {
     return client.messages.create({
-        body: message,
+        body: options.message,
         to: config.twilio.approval.to_number,
         from: config.twilio.approval.from_number
     }).then((message) => console.log(message.sid));

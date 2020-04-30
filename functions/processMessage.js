@@ -2,6 +2,8 @@ const functions = require('firebase-functions');
 const octwilio = require('./octwilio');
 const octopus = require('./octopus');
 
+const config = octwilio.config;
+
 function createApprovalOptions(approval, result, message) {
     let relatedDocumentIds = approval.Event.RelatedDocumentIds;
     let serverTaskId = relatedDocumentIds.find((id => id.startsWith('ServerTasks-')));
@@ -20,13 +22,19 @@ function createApprovalOptions(approval, result, message) {
 }
 
 function processApproval(from, result, message, response) {
+    let messageOptions = {
+        message: response,
+        toNumber: from,
+        fromNumber: config.twilio.approval.fromNumber
+    };
+
     return octwilio.getApprovalRecord(from)
         .then((approval) => { return createApprovalOptions(approval, result, message); })
         .then(octopus.findInterruption)
         .then(octopus.takeResponsibility)
         .then(octopus.submitInterruption)
         .then(() => { return octwilio.deleteApproval(from); })
-        .then(() => { return octwilio.sendTwilioMessage(response); });
+        .then(() => { return octwilio.sendTwilioMessage(messageOptions); });
 }
 
 exports.processMessage = functions.https.onRequest((req, res) => {
@@ -40,7 +48,13 @@ exports.processMessage = functions.https.onRequest((req, res) => {
         action = processApproval(from, "Abort", message, "Deployment rejected.");
     }
     else {
-        action = octwilio.sendTwilioMessage("Sorry, I didn't understand that. Please try again.");
+        let messageOptions = {
+            message: "Sorry, I didn't understand that. Please try again.",
+            toNumber: from,
+            fromNumber: config.twilio.approval.fromNumber
+        };
+
+        action = octwilio.sendTwilioMessage(messageOptions);
     }
 
     return action.then(() => { return res.status(200).send(); });
