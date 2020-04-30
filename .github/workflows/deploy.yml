@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "functions/**"
+      - ".firebaserc"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Lint
+        run: |
+          cd functions
+          npm install
+          npm run lint
+      - name: Deploy
+        run: firebase deploy --only functions --token "{{ secrets.FIREBASE_TOKEN }}"
