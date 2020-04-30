@@ -30,7 +30,6 @@ exports.findInterruption = function (options) {
     }
 
     return rp(requestOptions).then((results) => {
-        console.log(results);
         let interruption = results.Items[0];
 
         options.interruption = interruption;
@@ -43,7 +42,6 @@ exports.getSubscriptionPayload = function (req) {
     const payload = req.body.Payload;
 
     if (payload) {
-        console.log(payload);
         return Promise.resolve(payload);
     }
 

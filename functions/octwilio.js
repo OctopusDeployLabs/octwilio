@@ -21,7 +21,6 @@ exports.getApprovalRecord = function (from) {
             console.log("Cannot find document for " + from);
         } else {
             approval = doc.data();
-            console.log(approval);
         }
 
         return approval;
@@ -40,5 +39,5 @@ exports.sendTwilioMessage = function (options) {
         body: options.message,
         to: config.twilio.approval.to_number,
         from: config.twilio.approval.from_number
-    }).then((message) => console.log(message.sid));
+    });
 };

@@ -16,8 +16,6 @@ function createApprovalOptions(approval, result, message) {
         spaceId: approval.Event.SpaceId
     }
 
-    console.log(options);
-
     return Promise.resolve(options);
 }
 
