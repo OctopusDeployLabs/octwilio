@@ -6,8 +6,9 @@ on:
     paths:
       - "functions/**"
       - ".firebaserc"
+      - ".github/workflows/deploy.yml"
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,4 +25,4 @@ jobs:
           npm install
           npm run lint
       - name: Deploy
-        run: firebase deploy --only functions --token "{{ secrets.FIREBASE_TOKEN }}"
+        run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}"
