@@ -1,0 +1,43 @@
+name: Package and Push to Octopus
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "functions/**"
+      - ".firebaserc"
+      - ".github/workflows/package-and-push-to-octopus.yml"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Set version
+        id: set-version
+        run: echo "::set-env name=PACKAGE_VERSION::$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER"
+      - name: Install Octopus CLI
+        run: |
+          sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
+          curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
+          sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
+          sudo apt update && sudo apt install octopuscli
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+      - name: Lint
+        run: |
+          cd functions
+          npm install
+          npm run lint
+      - name: Package octwilio
+        run: |
+          mkdir -p ./packages/octwilio/
+          cp .firebaserc firebase.json ./packages/octwilio/
+          cp -avr ./functions/ ./packages/octwilio/
+          octo pack --id="octwilio" --format="Zip" --version="$PACKAGE_VERSION" --basePath="./packages/octwilio" --outFolder="./packages"
+      - name: Push octwilio to Octopus
+        run: octo push --package="./packages/octwilio.$PACKAGE_VERSION.zip" --server="${{ secrets.OCTOPUS_SERVER_URL }}" --apiKey="${{ secrets.OCTOPUS_API_KEY }}" --space="${{ secrets.OCTOPUS_SPACE }}"
