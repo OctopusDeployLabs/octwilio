@@ -6,6 +6,7 @@ on:
     paths:
       - "functions/**"
       - ".firebaserc"
+      - "firebase.json"
       - ".github/workflows/deploy.yml"
 jobs:
   deploy:
