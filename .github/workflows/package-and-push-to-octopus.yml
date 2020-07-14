@@ -37,7 +37,7 @@ jobs:
         run: |
           mkdir -p ./packages/octwilio/
           cp .firebaserc firebase.json ./packages/octwilio/
-          cp -avr ./functions/ ./packages/octwilio/
+          cp -vr ./functions/ ./packages/octwilio/
           octo pack --id="octwilio" --format="Zip" --version="$PACKAGE_VERSION" --basePath="./packages/octwilio" --outFolder="./packages"
       - name: Push octwilio to Octopus Samples
         run: octo push --package="./packages/octwilio.$PACKAGE_VERSION.zip" --server="${{ secrets.OCTOPUS_SERVER_URL }}" --apiKey="${{ secrets.OCTOPUS_API_KEY }}" --space="${{ secrets.OCTOPUS_SPACE }}"
