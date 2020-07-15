@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - "functions/**"
-      - ".firebaserc"
-      - "firebase.json"
-      - ".github/workflows/package-and-push-to-octopus.yml"
+      - functions/**
+      - .firebaserc
+      - firebase.json
+      - .github/workflows/package-and-push-to-octopus.yml
 jobs:
   deploy:
     runs-on: ubuntu-latest
